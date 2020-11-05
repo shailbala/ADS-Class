@@ -5,7 +5,7 @@
 
 #include<stdio.h>
 #define MAX 5
-#define h(k) = k%MAX
+#define h(k) k%MAX
 
 struct node
 {
