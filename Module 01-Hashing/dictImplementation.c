@@ -3,135 +3,47 @@
 
 #include<stdio.h>
 #define MAX 5
-#define Hash(K) K%MAX
+#define h(k) k%MAX
 
-typedef struct List Node;
-
-struct List
+struct node
 {
-	int roll;
-	char name[20];
-	Node *Next;
+	int key;
+	struct node *next;
 };
+struct node *H[MAX];
 
-Node *H[MAX];
-
-void Insert()
+void Insert(int k)
 {
-	int roll;
-	char n[20];
-	Node *Temp,*Curr,*Prev=NULL;
+	int i;
 
-	printf("Enter roll no:\t");
-	scanf("%d",&roll);
-	printf("Enter name:\t");
-	scanf("%s",&n);
-
-	Curr=H[Hash(roll)];
-	//printf("%d\n",*Curr);
-
-	if(Curr==NULL)	//Assignment of the Node
-	{
-		Temp=(Node *)malloc(sizeof(Node));
-		Temp->roll=roll;
-		strcpy(Temp->name,value);
-		H[Hash(roll)]=Temp;
-		Temp->Next=NULL;
-		return;
-	}
-	while(Curr!=NULL)
-	{
-		Prev=Curr;
-		if(key==Curr->roll)
-		{
-			printf("Duplicate entries not allowed \n");
-			return;
-		}
-		Curr=Curr->Next;
-	}
-	if(Curr==NULL)	//Insert at the end of the list
-	{
-		Temp=(Node *)malloc(sizeof(Node));
-		Temp->roll=roll;
-		strcpy(Temp->name,n);
-		Prev->Next=Temp;
-		Temp->Next=NULL;
-
-	}
+	struct node *temp;
+	i=h(k);
+	temp=(struct node *)malloc(sizeof(struct node));
+	temp->key=k;
+	temp->next=H[i];
+	H[i]=temp;
 }
 
-void Delete()
+void Search(int k)
 {
-	int num;
+	int i;
 
-	printf("Enter the roll number to delete\t");
-	scanf("%d",&num);
+	i=h(k);
+	struct node *temp;
+	temp=H[i];
 
-	Node *Curr,*Prev;
-	Curr=H[Hash(num)];
-	Prev=Curr;
-
-	if(Curr==NULL)	// Node is not initialised or assigned
-		printf("Element not found \n");
-	else
+	while(temp!=NULL)
 	{
-		while(Curr!=NULL && Curr->roll!=num)
+		if(temp->key==k)
 		{
-			Prev=Curr;
-			Curr=Curr->Next;
-		}
-		if(Curr==NULL)	// Element not present
-			printf("Element not found \n");
-
-		else if (Curr==Prev && Curr->Next==NULL)	// First and the only node
-		{
-			printf("Node deleted successfully \n");
-			H[Hash(num)]=NULL;
-			free(Curr);	
-		}
-		else if(Curr==Prev)	//Deletion of First node
-		{
-			printf("Node deleted successfully \n");
-			H[Hash(num)]=Curr->Next;
-			free(Curr);
-		}
-		else if(Curr->Next==NULL)	// Deletion of Last Node
-		{
-			printf("Node deleted successfully \n");
-			Prev->Next=NULL;
-			free(Curr);
-		}
-		else	// Intermediate node
-		{
-			printf("Node deleted successfully \n");
-			Prev->Next=Curr->Next;
-			free(Curr);
-		}
-	}
-}
-
-void Search()
-{
-	int num,i;
-
-	printf("Enter a roll number to search\t");
-	scanf("%d",&num);
-
-	Node *Temp;
-	Temp=H[Hash(num)];
-
-	while(Temp!=NULL)
-	{
-		if(Temp->roll==num)
-		{
-			printf("Roll number found\t Corresponding Name  %s \n",Temp->name);
+			printf("Element found at position %d \n",i+1);
 			break;
 		}
-		Temp=Temp->Next;
+		temp=temp->next;
 	}
-	if(Temp==NULL)
-		printf("Roll no. not found \n");
-}
+	if(temp==NULL)
+		printf("Element not found \n");
+} 
 
 void Display()
 {
@@ -142,13 +54,13 @@ void Display()
 	{
 		if(H[i]!=NULL)
 		{
-			Node *temp;
+			struct node *temp;
 			temp=H[i];
 
 			while(temp!=NULL)
 			{
-				printf("%d %s\t",temp->roll,temp->name);
-				temp=temp->Next;
+				printf("%d \t",temp->key);
+				temp=temp->next;
 			}
 			printf("\n");
 		}
@@ -156,6 +68,55 @@ void Display()
 			printf("NULL \n");
 	}
 	printf("\n");
+}
+
+void Delete(int k)
+{
+	int i;
+
+	i=h(k);
+	struct node *Curr,*Prev;
+	Curr=H[i];
+	Prev=Curr;
+
+	if(Curr==NULL)	// Node is not initialised or assigned
+		printf("Element not found \n");
+	else
+	{
+		while(Curr!=NULL && Curr->key!=k)
+		{
+			Prev=Curr;
+			Curr=Curr->next;
+		}
+		if(Curr==NULL)	// Element not present
+			printf("Element not found \n");
+
+		else if (Curr==Prev && Curr->next==NULL)	// First and the only node
+		{
+			printf("Node deleted!\n");
+			H[i]=NULL;
+			free(Curr);	
+		}
+		else if(Curr==Prev)	//Deletion of First node
+		{
+			printf("Node deleted successfully \n");
+			H[i]=Curr->next;
+			free(Curr);
+		}
+		else if(Curr->next==NULL)	// Deletion of Last Node
+		{
+			printf("Node deleted successfully \n");
+			Prev->next=NULL;
+			free(Curr);
+		}
+		else	// Intermediate node
+		{
+			printf("Node deleted successfully \n");
+			Prev->next=Curr->next;
+			free(Curr);
+		}
+	}
+
 }
 
 int main()
@@ -167,17 +128,24 @@ int main()
 
 	while(ch!=0)
 	{
-		printf("1-Insert\n2-Delete\n3-Search\n4-Display\n0-Exit\nEnter your choice\t");
+		printf("Menu: \n 1- Insert\n 2- Search\n 3- Delete\n 4- Display\n Enter 0 to Exit\n");
 		scanf("%d",&ch);
-		if(ch==1)
-			Insert();
-		else if(ch==2)
-			Delete();
-		else if(ch==3)
-			Search();
+		if(ch==1||ch==2||ch==3)
+		{
+			int num;
+			printf("Enter number\t");
+			scanf("%d",&num);
+			if(ch==1)
+				Insert(num);
+			else if(ch==2)
+				Search(num);
+			else if(ch==3)
+				Delete(num);
+		}
 		else if(ch==4)
 			Display();
 		else
 			break;
 	}
+	return 0;
 }
