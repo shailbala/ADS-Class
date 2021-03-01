@@ -1,4 +1,4 @@
 # ADS-Class
-Advanced Data Structure Class
+Advanced Data Structure and Advanced Computer Algorithms Class
 
-Everything from ADS Class.
+All lab assignemnts
